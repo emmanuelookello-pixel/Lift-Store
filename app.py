@@ -6,6 +6,7 @@ from flask import (
     url_for,
     session,
     flash,
+    send_from_directory,
 )
 
 from flask_sqlalchemy import SQLAlchemy
@@ -137,6 +138,19 @@ def save_product_image(image_file):
     return (
         f"uploads/products/{unique_filename}"
     )
+
+
+@app.route('/static/uploads/products/<path:filename>')
+def product_upload(filename):
+    """Serve uploads from the same directory used by the upload form."""
+    from werkzeug.exceptions import NotFound
+    mimetype = {'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png', 'webp': 'image/webp'}.get(filename.rsplit('.', 1)[-1].lower())
+    try:
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename, mimetype=mimetype)
+    except NotFound:
+        # Catalogue photos shipped with the application remain available when
+        # new uploads are stored on a separate persistent disk.
+        return send_from_directory(os.path.join(app.static_folder, 'uploads', 'products'), filename, mimetype=mimetype)
 
 
 def delete_local_product_image(image_path):
@@ -1619,6 +1633,7 @@ def bootstrap_demo_db():
 
     try:
         seed_v2_data()
+        restore_catalogue()
         print("Lift Store demo database initialized successfully.")
     except Exception as error:
         db.session.rollback()
@@ -1642,6 +1657,33 @@ def seed_v2_command():
         print("")
 
         raise
+
+def restore_catalogue():
+    """Restore the approved catalogue once per database, without overwriting edits."""
+    import json
+    from pathlib import Path
+    source = Path(app.root_path) / 'catalogue.json'
+    if not source.is_file():
+        return
+    db.session.execute(db.text('CREATE TABLE IF NOT EXISTS catalogue_restore (version VARCHAR(80) PRIMARY KEY)'))
+    version = 'local-catalogue-2026-09-30'
+    if db.session.execute(db.text('SELECT version FROM catalogue_restore WHERE version=:v'), {'v': version}).first():
+        return
+    for values in json.loads(source.read_text(encoding='utf-8')):
+        if Product.query.filter_by(name=values['name']).first():
+            continue
+        product = Product(**values)
+        for model, label, field in ((Brand, product.brand, 'brand_id'), (Category, product.category, 'category_id')):
+            record = model.query.filter(db.func.lower(model.name) == label.lower()).first()
+            if record is None:
+                record = model(name=label, active=True)
+                db.session.add(record)
+                db.session.flush()
+            setattr(product, field, record.id)
+        db.session.add(product)
+    db.session.execute(db.text('INSERT INTO catalogue_restore (version) VALUES (:v)'), {'v': version})
+    db.session.commit()
+
 
 def seed_products():
 
