@@ -44,23 +44,29 @@ def store_session_key():
 
 app.config['SECRET_KEY']=store_session_key()
 
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "sqlite:///lift_store.db"
-)
+DATA_DIR = os.environ.get("DATA_DIR")
+
+if DATA_DIR:
+    os.makedirs(DATA_DIR, exist_ok=True)
+    DATABASE_PATH = os.path.join(DATA_DIR, "lift_store.db")
+    app.config["SQLALCHEMY_DATABASE_URI"] = (
+        "sqlite:///" + DATABASE_PATH.replace("\\", "/")
+    )
+else:
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///lift_store.db"
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
-# ==================================================
-# PRODUCT IMAGE UPLOAD CONFIGURATION
-# ==================================================
-
-UPLOAD_FOLDER = os.path.join(
-    app.root_path,
-    "static",
-    "uploads",
-    "products",
-)
+if DATA_DIR:
+    UPLOAD_FOLDER = os.path.join(DATA_DIR, "uploads", "products")
+else:
+    UPLOAD_FOLDER = os.path.join(
+        app.root_path,
+        "static",
+        "uploads",
+        "products",
+    )
 
 ALLOWED_IMAGE_EXTENSIONS = {
     "png",
