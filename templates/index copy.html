@@ -1,0 +1,1041 @@
+{% extends "base.html" %}
+
+{% block title %}
+Lift Store | Phones, Electronics & Accessories in Lira City
+{% endblock %}
+
+{% block content %}
+
+<!-- =====================================================
+     PHASE 2 HERO
+===================================================== -->
+<section class="p2-hero">
+    <div class="container p2-hero-grid">
+
+        <div class="p2-hero-text">
+
+            <span class="p2-kicker">
+                LIFT STORE • LIRA CITY
+            </span>
+
+            <h1>
+                Smart Technology.
+                <span>Better Living.</span>
+            </h1>
+
+            <p>
+                Shop smartphones, laptops, accessories and more
+                from trusted brands, with convenient delivery
+                across Lira City.
+            </p>
+
+            <div class="p2-hero-buttons">
+
+                <a href="#products" class="p2-primary-btn">
+                    Shop Now
+                </a>
+
+                <a href="#shop-categories" class="p2-secondary-btn">
+                    Browse Categories
+                </a>
+
+            </div>
+
+            <div class="p2-hero-points">
+
+                <span> Trusted products</span>
+                <span> Lira delivery</span>
+                <span> Secure ordering</span>
+
+            </div>
+
+        </div>
+
+
+        <div class="p2-hero-visual">
+
+            <div class="p2-phone p2-phone-back">
+                <div class="p2-camera"></div>
+            </div>
+
+            <div class="p2-phone p2-phone-front">
+
+                <div class="p2-phone-screen">
+
+                    <small>LIFT STORE</small>
+
+                    <strong>SMART</strong>
+
+                    <span>TECH DEALS</span>
+
+                    <div class="p2-screen-button">
+                        SHOP NOW
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="p2-floating-card p2-floating-one">
+                <strong>Fast Delivery</strong>
+                <span>Across Lira City</span>
+            </div>
+
+            <div class="p2-floating-card p2-floating-two">
+                <strong>Top Brands</strong>
+                <span>Shop with confidence</span>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- =====================================================
+     TRUST / BENEFITS
+===================================================== -->
+<section class="p2-benefits">
+
+    <div class="container p2-benefit-grid">
+
+        <div class="p2-benefit">
+
+            <div class="p2-benefit-icon"></div>
+
+            <div>
+                <strong>Quality Products</strong>
+                <span>Trusted technology brands</span>
+            </div>
+
+        </div>
+
+
+        <div class="p2-benefit">
+
+            <div class="p2-benefit-icon"></div>
+
+            <div>
+                <strong>Lira Delivery</strong>
+                <span>Convenient local delivery</span>
+            </div>
+
+        </div>
+
+
+        <div class="p2-benefit">
+
+            <div class="p2-benefit-icon"></div>
+
+            <div>
+                <strong>Secure Ordering</strong>
+                <span>Simple checkout process</span>
+            </div>
+
+        </div>
+
+
+        <div class="p2-benefit">
+
+            <div class="p2-benefit-icon"></div>
+
+            <div>
+                <strong>Customer Support</strong>
+                <span>Help when you need it</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     SHOP BY CATEGORY
+===================================================== -->
+<section class="p2-section" id="shop-categories">
+
+    <div class="container">
+
+        <div class="p2-section-heading">
+
+            <div>
+
+                <span class="p2-eyebrow">
+                    EXPLORE LIFT STORE
+                </span>
+
+                <h2>Shop by Category</h2>
+
+                <p>
+                    Find the technology and accessories you need.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="p2-category-grid">
+
+            {% for category in categories %}
+
+            <a
+                href="{{ url_for('home', category=category.name) }}"
+                class="p2-category-card
+                {% if selected_category and selected_category|lower == category.name|lower %}
+                    active
+                {% endif %}"
+            >
+
+                <div class="p2-category-icon">
+
+                    {% set category_lower = category.name|lower %}
+
+                    {% if 'phone' in category_lower %}
+                        
+                    {% elif 'laptop' in category_lower %}
+                        
+                    {% elif 'tablet' in category_lower %}
+                        ▣
+                    {% elif 'watch' in category_lower %}
+                        ⌚
+                    {% elif 'earphone' in category_lower %}
+                        
+                    {% elif 'charger' in category_lower %}
+                        
+                    {% elif 'power' in category_lower %}
+                        
+                    {% else %}
+                        ◇
+                    {% endif %}
+
+                </div>
+
+                <strong>{{ category.name }}</strong>
+
+                <span>Shop now </span>
+
+            </a>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     SHOP BY BRAND
+===================================================== -->
+<section class="p2-brand-section">
+
+    <div class="container">
+
+        <div class="p2-section-heading">
+
+            <div>
+
+                <span class="p2-eyebrow">
+                    LEADING BRANDS
+                </span>
+
+                <h2>Shop Your Favourite Brand</h2>
+
+                <p>
+                    Browse products from brands you know and trust.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="p2-brand-list">
+
+            <a
+                href="{{ url_for('home') }}"
+                class="p2-brand-pill
+                {% if not selected_brand %}
+                    active
+                {% endif %}"
+            >
+                All Brands
+            </a>
+
+
+            {% for brand in brands %}
+
+            <a
+                href="{{ url_for('home', brand=brand.name) }}"
+                class="p2-brand-pill
+                {% if selected_brand and selected_brand|lower == brand.name|lower %}
+                    active
+                {% endif %}"
+            >
+                {{ brand.name }}
+            </a>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- =====================================================
+     SPECIAL OFFERS
+===================================================== -->
+
+{% if special_offers %}
+
+<section class="p2-showcase-section p2-offers-section">
+
+    <div class="container">
+
+        <div class="p2-showcase-heading">
+
+            <div>
+
+                <span class="p2-eyebrow">
+                    SAVE MORE
+                </span>
+
+                <h2>Special Offers</h2>
+
+                <p>
+                    Grab selected Lift Store products at special prices.
+                </p>
+
+            </div>
+
+            <span class="p2-section-tag">
+                Limited Deals
+            </span>
+
+        </div>
+
+
+        <div class="p2-showcase-grid">
+
+            {% for product in special_offers %}
+
+            <article class="p2-showcase-card">
+
+                <div class="p2-offer-badge">
+                    -{{ product.discount_percent }}%
+                </div>
+
+
+                <a
+                    href="{{ url_for('product_detail', product_id=product.id) }}"
+                    class="p2-showcase-image"
+                >
+
+                    {% if product.image %}
+
+                        {% if product.image.startswith('http://') or product.image.startswith('https://') %}
+
+                            <img
+                                src="{{ product.image }}"
+                                alt="{{ product.name }}"
+                                loading="lazy"
+                            >
+
+                        {% else %}
+
+                            <img
+                                src="{{ url_for('static', filename=product.image) }}"
+                                alt="{{ product.name }}"
+                                loading="lazy"
+                            >
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <span class="p2-showcase-fallback">
+                            
+                        </span>
+
+                    {% endif %}
+
+                </a>
+
+
+                <div class="p2-showcase-info">
+
+                    <span class="p2-showcase-brand">
+                        {{ product.brand }}
+                    </span>
+
+                    <h3>
+
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}">
+                            {{ product.name }}
+                        </a>
+
+                    </h3>
+
+
+                    <div class="p2-showcase-price">
+
+                        <strong>
+                            {{ product.sale_price|ugx }}
+                        </strong>
+
+                        {% if product.old_price and product.old_price > product.sale_price %}
+
+                            <del>
+                                {{ product.old_price|ugx }}
+                            </del>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <a
+                        href="{{ url_for('product_detail', product_id=product.id) }}"
+                        class="p2-card-link"
+                    >
+                        View Deal 
+                    </a>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+
+<!-- =====================================================
+     NEW ARRIVALS
+===================================================== -->
+
+{% if new_arrivals %}
+
+<section class="p2-showcase-section">
+
+    <div class="container">
+
+        <div class="p2-showcase-heading">
+
+            <div>
+
+                <span class="p2-eyebrow">
+                    JUST ADDED
+                </span>
+
+                <h2>New Arrivals</h2>
+
+                <p>
+                    Discover the latest products added to Lift Store.
+                </p>
+
+            </div>
+
+            <span class="p2-section-tag">
+                New
+            </span>
+
+        </div>
+
+
+        <div class="p2-showcase-grid">
+
+            {% for product in new_arrivals %}
+
+            <article class="p2-showcase-card">
+
+                <span class="p2-new-badge">
+                    NEW
+                </span>
+
+
+                <a
+                    href="{{ url_for('product_detail', product_id=product.id) }}"
+                    class="p2-showcase-image"
+                >
+
+                    {% if product.image %}
+
+                        {% if product.image.startswith('http://') or product.image.startswith('https://') %}
+
+                            <img
+                                src="{{ product.image }}"
+                                alt="{{ product.name }}"
+                                loading="lazy"
+                            >
+
+                        {% else %}
+
+                            <img
+                                src="{{ url_for('static', filename=product.image) }}"
+                                alt="{{ product.name }}"
+                                loading="lazy"
+                            >
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <span class="p2-showcase-fallback">
+                            
+                        </span>
+
+                    {% endif %}
+
+                </a>
+
+
+                <div class="p2-showcase-info">
+
+                    <span class="p2-showcase-brand">
+                        {{ product.brand }}
+                    </span>
+
+                    <h3>
+
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}">
+                            {{ product.name }}
+                        </a>
+
+                    </h3>
+
+
+                    <div class="p2-showcase-price">
+
+                        <strong>
+                            {{ product.price|ugx }}
+                        </strong>
+
+                        {% if product.old_price and product.old_price > product.price %}
+
+                            <del>
+                                {{ product.old_price|ugx }}
+                            </del>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <a
+                        href="{{ url_for('product_detail', product_id=product.id) }}"
+                        class="p2-card-link"
+                    >
+                        View Product 
+                    </a>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+
+<!-- =====================================================
+     BEST SELLERS
+===================================================== -->
+
+{% if best_sellers %}
+
+<section class="p2-showcase-section p2-bestseller-section">
+
+    <div class="container">
+
+        <div class="p2-showcase-heading">
+
+            <div>
+
+                <span class="p2-eyebrow">
+                    CUSTOMER CHOICE
+                </span>
+
+                <h2>Best Sellers</h2>
+
+                <p>
+                    Popular products based on Lift Store sales.
+                </p>
+
+            </div>
+
+            <span class="p2-section-tag">
+                Popular
+            </span>
+
+        </div>
+
+
+        <div class="p2-showcase-grid">
+
+            {% for product in best_sellers %}
+
+            <article class="p2-showcase-card">
+
+                <span class="p2-best-badge">
+                    BEST SELLER
+                </span>
+
+
+                <a
+                    href="{{ url_for('product_detail', product_id=product.id) }}"
+                    class="p2-showcase-image"
+                >
+
+                    {% if product.image %}
+
+                        {% if product.image.startswith('http://') or product.image.startswith('https://') %}
+
+                            <img
+                                src="{{ product.image }}"
+                                alt="{{ product.name }}"
+                                loading="lazy"
+                            >
+
+                        {% else %}
+
+                            <img
+                                src="{{ url_for('static', filename=product.image) }}"
+                                alt="{{ product.name }}"
+                                loading="lazy"
+                            >
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <span class="p2-showcase-fallback">
+                            
+                        </span>
+
+                    {% endif %}
+
+                </a>
+
+
+                <div class="p2-showcase-info">
+
+                    <span class="p2-showcase-brand">
+                        {{ product.brand }}
+                    </span>
+
+                    <h3>
+
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}">
+                            {{ product.name }}
+                        </a>
+
+                    </h3>
+
+
+                    <div class="p2-showcase-price">
+
+                        <strong>
+                            {{ product.price|ugx }}
+                        </strong>
+
+                        {% if product.old_price and product.old_price > product.price %}
+
+                            <del>
+                                {{ product.old_price|ugx }}
+                            </del>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <a
+                        href="{{ url_for('product_detail', product_id=product.id) }}"
+                        class="p2-card-link"
+                    >
+                        View Product 
+                    </a>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+<!-- =====================================================
+     PRODUCTS
+===================================================== -->
+<section class="products-section p2-products" id="products">
+
+    <div class="container">
+
+        <div class="p2-section-heading p2-product-heading">
+
+            <div>
+
+                <span class="p2-eyebrow">
+                    LIFT STORE COLLECTION
+                </span>
+
+                <h2>
+
+                    {% if selected_brand %}
+
+                        {{ selected_brand }} Products
+
+                    {% elif selected_category %}
+
+                        {{ selected_category }}
+
+                    {% elif search %}
+
+                        Search results for "{{ search }}"
+
+                    {% else %}
+
+                        Featured Products
+
+                    {% endif %}
+
+                </h2>
+
+                <p>
+                    Discover products available from Lift Store.
+                </p>
+
+            </div>
+
+
+            <span class="p2-product-count">
+                {{ products|length }} products
+            </span>
+
+        </div>
+
+
+        {% if products %}
+
+        <div class="product-grid">
+
+            {% for product in products %}
+
+            <article class="product-card p2-product-card">
+
+                <div class="p2-card-badges">
+
+                    {% if product.old_price and product.old_price > product.price %}
+
+                        <span class="p2-sale-badge">
+                            SALE
+                        </span>
+
+                    {% endif %}
+
+
+                    {% if product.featured %}
+
+                        <span class="p2-featured-badge">
+                            FEATURED
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <a
+                    href="{{ url_for('product_detail', product_id=product.id) }}"
+                    class="product-image p2-product-image"
+                >
+
+                    {% if product.image %}
+
+                        {% if product.image.startswith('http://') or product.image.startswith('https://') %}
+
+                            <img
+                                src="{{ product.image }}"
+                                alt="{{ product.name }}"
+                                loading="lazy"
+                            >
+
+                        {% else %}
+
+                            <img
+                                src="{{ url_for('static', filename=product.image) }}"
+                                alt="{{ product.name }}"
+                                loading="lazy"
+                            >
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <span class="p2-image-fallback">
+                            
+                        </span>
+
+                    {% endif %}
+
+                </a>
+
+
+                <div class="product-info">
+
+                    <div class="p2-product-meta">
+
+                        <span class="brand-name">
+                            {{ product.brand }}
+                        </span>
+
+                        {% if product.stock > 0 %}
+
+                            <span class="p2-stock-small">
+                                In Stock
+                            </span>
+
+                        {% else %}
+
+                            <span class="p2-stock-small out">
+                                Out of Stock
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <h3>
+
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}">
+                            {{ product.name }}
+                        </a>
+
+                    </h3>
+
+
+                    {% if product.storage or product.ram %}
+
+                    <div class="spec-row">
+
+                        {% if product.storage %}
+                            <span>{{ product.storage }}</span>
+                        {% endif %}
+
+                        {% if product.ram %}
+                            <span>{{ product.ram }} RAM</span>
+                        {% endif %}
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <div class="price-area p2-price-area">
+
+                        <strong>
+                            {{ product.price|ugx }}
+                        </strong>
+
+                        {% if product.old_price and product.old_price > product.price %}
+
+                            <del>
+                                {{ product.old_price|ugx }}
+                            </del>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="product-buttons">
+
+                        <a
+                            href="{{ url_for('product_detail', product_id=product.id) }}"
+                            class="outline-btn"
+                        >
+                            View Details
+                        </a>
+
+
+                        {% if product.stock > 0 %}
+
+                        <a
+                            href="{{ url_for('add_to_cart', product_id=product.id) }}"
+                            class="cart-btn"
+                        >
+                            Add to Cart
+                        </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        </div>
+
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <div class="p2-empty-icon">
+                
+            </div>
+
+            <h3>No products found</h3>
+
+            <p>
+                Try another search, category or brand.
+            </p>
+
+            <a
+                href="{{ url_for('home') }}"
+                class="p2-primary-btn"
+            >
+                Browse All Products
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     WHY LIFT STORE
+===================================================== -->
+<section class="p2-why">
+
+    <div class="container p2-why-grid">
+
+        <div class="p2-why-content">
+
+            <span class="p2-eyebrow p2-white">
+                WHY LIFT STORE?
+            </span>
+
+            <h2>
+                Technology shopping made easier in Lira.
+            </h2>
+
+            <p>
+                Lift Store brings smartphones, electronics and
+                accessories closer to customers in Lira City
+                through a simple online shopping experience.
+            </p>
+
+            <div class="p2-why-points">
+
+                <div>
+                    <strong>01</strong>
+                    <span>Browse products online</span>
+                </div>
+
+                <div>
+                    <strong>02</strong>
+                    <span>Order conveniently</span>
+                </div>
+
+                <div>
+                    <strong>03</strong>
+                    <span>Arrange local delivery</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="p2-delivery-box">
+
+            <span class="p2-delivery-symbol">
+                
+            </span>
+
+            <h3>Delivery Across Lira City</h3>
+
+            <p>
+                Delivery charges can be calculated according to
+                your selected delivery area during checkout.
+            </p>
+
+            <a href="#products">
+                Start Shopping 
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FINAL CALL TO ACTION
+===================================================== -->
+<section class="p2-final-cta">
+
+    <div class="container p2-final-cta-inner">
+
+        <div>
+
+            <span class="p2-eyebrow">
+                READY TO SHOP?
+            </span>
+
+            <h2>
+                Find your next device at Lift Store.
+            </h2>
+
+            <p>
+                Browse our collection and order from anywhere
+                in Lira City.
+            </p>
+
+        </div>
+
+        <a href="#products" class="p2-primary-btn">
+            Explore Products
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

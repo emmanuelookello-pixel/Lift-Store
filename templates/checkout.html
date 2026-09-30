@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+
+{% block title %}
+Checkout | Lift Store
+{% endblock %}
+
+
+{% block content %}
+
+<section class="page-section checkout-page">
+
+    <div class="container small-container">
+
+        <div class="form-card checkout-card">
+
+            <span class="eyebrow">
+                FINAL STEP
+            </span>
+
+            <h1>Checkout</h1>
+
+            <p class="form-intro">
+                Enter your delivery details below.
+                Lift Store will contact you to confirm your order.
+            </p>
+
+
+          <!-- ==============================
+     ORDER SUMMARY
+=============================== -->
+
+<div
+    class="checkout-summary"
+    id="checkoutSummary"
+    data-subtotal="{{ subtotal }}"
+>
+
+    <div class="checkout-summary-title">
+
+        <i data-lucide="receipt-text"></i>
+
+        <div>
+            <small>ORDER SUMMARY</small>
+            <strong>Purchase Details</strong>
+        </div>
+
+    </div>
+
+
+    <!-- PRODUCTS -->
+    <div class="checkout-summary-row">
+
+        <span>Products</span>
+
+        <strong id="checkoutSubtotal">
+            {{ subtotal|ugx }}
+        </strong>
+
+    </div>
+
+
+    <!-- DELIVERY -->
+    <div class="checkout-summary-row">
+
+        <span>Delivery</span>
+
+        <strong id="checkoutDelivery">
+            Select delivery area
+        </strong>
+
+    </div>
+
+
+    <!-- FINAL TOTAL -->
+    <div class="checkout-summary-row checkout-total">
+
+        <span>Final Total</span>
+
+        <strong id="checkoutFinalTotal">
+            {{ subtotal|ugx }}
+        </strong>
+
+    </div>
+
+</div>
+
+
+            <!-- ==============================
+                 CHECKOUT FORM
+            =============================== -->
+
+            <form
+                method="POST"
+                action="{{ url_for('checkout') }}"
+                class="checkout-form"
+            >
+
+                <!-- CSRF SECURITY -->
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+
+                <!-- FULL NAME -->
+
+                <div class="checkout-field">
+
+                    <label for="customer_name">
+                        Full Name
+                    </label>
+
+                    <div class="checkout-input">
+
+                        <i data-lucide="user"></i>
+
+                        <input
+                            type="text"
+                            id="customer_name"
+                            name="customer_name"
+                            placeholder="e.g. John Okello"
+                            autocomplete="name"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- PHONE NUMBER -->
+
+                <div class="checkout-field">
+
+                    <label for="phone">
+                        Phone Number
+                    </label>
+
+                    <div class="checkout-input">
+
+                        <i data-lucide="phone"></i>
+
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            placeholder="e.g. 0772 000 000"
+                            autocomplete="tel"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- DELIVERY AREA -->
+
+                <div class="checkout-field">
+
+                    <label for="delivery_area_id">
+                        Delivery Area
+                    </label>
+
+                    <div class="checkout-input">
+
+                        <i data-lucide="map-pin"></i>
+
+                        <select
+                            id="delivery_area_id"
+                            name="delivery_area_id"
+                            required
+                        >
+
+                            <option value="">
+                                Select your delivery area
+                            </option>
+
+                            {% for area in delivery_areas %}
+
+                                <option
+                                    value="{{ area.id }}"
+                                    data-fee="{{ area.fee }}"
+                                >
+                                    {{ area.name }}
+                                    — {{ area.fee|ugx }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EXACT DELIVERY LOCATION -->
+
+                <div class="checkout-field">
+
+                    <label for="location">
+                        Exact Delivery Location
+                    </label>
+
+                    <textarea
+                        id="location"
+                        name="location"
+                        placeholder="Example: Adyel, Lira City, near Adyel Primary School..."
+                        required
+                    ></textarea>
+
+                    <small class="field-help">
+                        Include a nearby landmark to help our delivery team.
+                    </small>
+
+                </div>
+
+
+                {% if saved_addresses %}<label>Use a saved address<select id="saved-address"><option value="">Choose address</option>{% for address in saved_addresses %}<option data-name="{{ address.recipient }}" data-phone="{{ address.phone }}" data-location="{{ address.location }}">{{ address.label }}</option>{% endfor %}</select></label>{% endif %}<label>Coupon code<input name="coupon" id="coupon-code" maxlength="50" placeholder="Enter code"></label><button type="button" id="apply-coupon" class="sf-button">Apply coupon</button><p id="coupon-feedback" role="status"></p><!-- PAYMENT METHOD -->
+
+                <div class="checkout-field">
+
+                    <label for="payment_method">
+                        Payment Method
+                    </label>
+
+                    <div class="checkout-input">
+
+                        <i data-lucide="credit-card"></i>
+
+                        <select
+                            id="payment_method"
+                            name="payment_method"
+                            required
+                        >
+
+                            <option value="Cash on Delivery">
+                                Cash on Delivery
+                            </option>
+
+                            <option disabled>MTN / Airtel Money — coming soon</option><option disabled>Credit / debit card — coming soon</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SECURITY MESSAGE -->
+
+                <div class="checkout-security">
+
+                    <i data-lucide="shield-check"></i>
+
+                    <div>
+                        <strong>
+                            Secure Ordering
+                        </strong>
+
+                        <span>
+                            Your order details are used only to
+                            process and deliver your purchase.
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <!-- PLACE ORDER -->
+
+                <button
+                    type="submit"
+                    class="form-submit checkout-submit"
+                >
+
+                    <i data-lucide="shopping-bag"></i>
+
+                    <span>
+                        Place Order
+                    </span>
+
+                </button>
+
+            </form>
+
+
+            <a
+                href="{{ url_for('cart') }}"
+                class="checkout-back"
+            >
+                <i data-lucide="arrow-left"></i>
+
+                <span>
+                    Return to Shopping Cart
+                </span>
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const deliverySelect =
+        document.getElementById("delivery_area_id");
+
+    const summary =
+        document.getElementById("checkoutSummary");
+
+    const deliveryDisplay =
+        document.getElementById("checkoutDelivery");
+
+    const totalDisplay =
+        document.getElementById("checkoutFinalTotal");
+
+
+    if (
+        !deliverySelect ||
+        !summary ||
+        !deliveryDisplay ||
+        !totalDisplay
+    ) {
+        return;
+    }
+
+
+    const subtotal =
+        Number(summary.dataset.subtotal || 0);
+
+
+    function formatUGX(amount) {
+
+        return "UGX " +
+            Math.round(amount).toLocaleString("en-US");
+
+    }
+
+
+    function updateCheckoutTotal() {
+
+        const selectedOption =
+            deliverySelect.options[
+                deliverySelect.selectedIndex
+            ];
+
+
+        if (
+            !selectedOption ||
+            !selectedOption.value
+        ) {
+
+            deliveryDisplay.textContent =
+                "Select delivery area";
+
+            totalDisplay.textContent =
+                formatUGX(subtotal);
+
+            return;
+        }
+
+
+        const deliveryFee =
+            Number(
+                selectedOption.dataset.fee || 0
+            );
+
+
+        const finalTotal =
+            subtotal + deliveryFee;
+
+
+        deliveryDisplay.textContent =
+            formatUGX(deliveryFee);
+
+        totalDisplay.textContent =
+            formatUGX(finalTotal);
+
+    }
+
+
+    deliverySelect.addEventListener(
+        "change",
+        updateCheckoutTotal
+    );
+
+
+    updateCheckoutTotal();
+
+});
+</script>
+{% endblock %}

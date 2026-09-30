@@ -1,0 +1,14 @@
+<p id="chat-status" role="status">Connecting to your conversation…</p>
+<div id="chat-messages" class="chat-messages" role="log" aria-label="Conversation" aria-live="polite" aria-relevant="additions"><p class="chat-empty">No messages yet. Start the conversation below.</p></div>
+<form id="chat-form" class="chat-form" method="post" action="{{ url_for('customer_chat_messages') if request.endpoint=='customer_chat' else url_for('admin_chat_messages',thread_id=thread.id) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<div class="chat-preview-tray"><div id="chat-file-preview" role="status"></div><button id="chat-remove-file" type="button" hidden aria-label="Remove attachment" title="Remove attachment">×</button></div>
+<div class="voice-controls"><button type="button" id="voice-stop" hidden><span class="recording-dot"></span> Stop recording</button><button type="button" id="voice-cancel" hidden>Cancel</button><span id="voice-status" role="status"></span></div>
+<div class="chat-composer-row">
+<label for="chat-file" class="chat-icon-button attach-button" title="Attach a picture, audio or file"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 12 6-6a3 3 0 0 1 4 4l-8 8a5 5 0 0 1-7-7l8-8"/><path d="m6 14 8-8"/></svg><span class="chat-sr-only">Attach a picture or file</span></label>
+<input class="chat-sr-only" id="chat-file" type="file" accept=".jpg,.jpeg,.png,.webp,.pdf,.txt,.webm,.ogg,.oga,.m4a,.mp4,.mp3,.wav">
+<label class="chat-sr-only" for="chat-text">Your message</label><textarea id="chat-text" name="message" rows="1" maxlength="2000" placeholder="Type a message…"></textarea>
+<button type="button" id="voice-record" class="chat-icon-button" aria-label="Record voice note" title="Record voice note"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg></button>
+<button type="submit" class="chat-icon-button chat-send" aria-label="Send message" title="Send message"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3 19 9-19 9 4-9-4-9Zm4 9h15"/></svg></button>
+</div><div class="chat-composer-hint"><span>Files up to 5 MB · Voice notes up to 2 min</span><span>Preview before sending</span></div>
+</form><noscript>Enable JavaScript to send and receive chat messages.</noscript>

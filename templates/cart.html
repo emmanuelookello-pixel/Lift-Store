@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+
+{% block title %}
+Shopping Cart | Lift Store
+{% endblock %}
+
+{% block content %}
+
+<section class="page-section">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    YOUR ORDER
+                </span>
+
+                <h1>
+                    Shopping Cart
+                </h1>
+
+            </div>
+
+        </div>
+
+
+        {% if items %}
+
+        <div class="cart-layout">
+
+
+            <div class="cart-items">
+
+                {% for item in items %}
+
+                <div class="cart-item">
+
+
+                    <!-- PRODUCT IMAGE -->
+                    <div class="cart-image">
+
+                        {% if item.product.image %}
+
+                            {% if item.product.image.startswith('http://')
+                                  or item.product.image.startswith('https://') %}
+
+                                <img
+                                    src="{{ item.product.image }}"
+                                    alt="{{ item.product.name }}"
+                                >
+
+                            {% else %}
+
+                                <img
+                                    src="{{ url_for('static', filename=item.product.image) }}"
+                                    alt="{{ item.product.name }}"
+                                >
+
+                            {% endif %}
+
+                        {% else %}
+
+                            <span style="font-size: 45px;">
+                                
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- PRODUCT INFORMATION -->
+                    <div class="cart-product-info">
+
+                        <span>
+                            {{ item.product.brand }}
+                        </span>
+
+                        <h3>
+                            {{ item.product.name }}
+                        </h3>
+
+                        <strong>
+                            {{ item.product.price|ugx }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- QUANTITY UPDATE FORM -->
+                    <form
+                        action="{{ url_for(
+                            'update_cart',
+                            product_id=item.product.id
+                        ) }}"
+                        method="POST"
+                        class="quantity-form"
+                    >
+
+                        <!-- CSRF SECURITY -->
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+
+                        <label>
+                            Quantity
+                        </label>
+
+                        <input
+                            type="number"
+                            name="quantity"
+                            value="{{ item.quantity }}"
+                            min="0"
+                            max="{{ item.product.stock }}"
+                            required
+                        >
+
+                        <button type="submit">
+                            Update
+                        </button>
+
+                    </form>
+
+
+                    <!-- SUBTOTAL -->
+                    <div class="subtotal">
+
+                        <small>
+                            Subtotal
+                        </small>
+
+                        <strong>
+                            {{ item.subtotal|ugx }}
+                        </strong>
+
+                        <a
+                            href="{{ url_for(
+                                'remove_from_cart',
+                                product_id=item.product.id
+                            ) }}"
+                        >
+                            Remove
+                        </a>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- ORDER SUMMARY -->
+            <div class="order-summary">
+
+                <h3>
+                    Order Summary
+                </h3>
+
+
+                <div>
+
+                    <span>
+                        Products
+                    </span>
+
+                    <strong>
+                        {{ total|ugx }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Delivery
+                    </span>
+
+                    <span>
+                        Confirmed at checkout
+                    </span>
+
+                </div>
+
+
+                <hr>
+
+
+                <div class="summary-total">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <strong>
+                        {{ total|ugx }}
+                    </strong>
+
+                </div>
+
+
+                <a
+                    href="{{ url_for('checkout') }}"
+                    class="checkout-btn"
+                >
+                    Proceed to Checkout
+                </a>
+
+
+                <a
+                    href="{{ url_for('home') }}"
+                    class="continue-shopping"
+                >
+                     Continue Shopping
+                </a>
+
+            </div>
+
+        </div>
+
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <div>
+                
+            </div>
+
+            <h2>
+                Your cart is empty
+            </h2>
+
+            <p>
+                Add a product to start your order.
+            </p>
+
+            <a
+                href="{{ url_for('home') }}"
+                class="primary-btn"
+            >
+                Continue Shopping
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

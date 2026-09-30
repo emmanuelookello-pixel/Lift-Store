@@ -1,0 +1,12 @@
+{% extends 'admin_management_base.html' %}
+{% block page_title %}Reviews{% endblock %}
+{% block management %}
+<h1>Reviews</h1><p>Approve or hide customer reviews. Review display on product pages is not yet connected.</p>
+<form class="filters panel" method="get">
+<label>Search reviews<input name="search" value="{{ search }}" placeholder="Product, customer or comment"></label>
+<label>Visibility<select name="status">{% for key,label in [('', 'All reviews'),('approved','Approved'),('hidden','Hidden')] %}<option value="{{ key }}" {% if key == status %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+<button>Apply filters</button><a href="{{ url_for('admin_reviews') }}">Clear</a></form>
+<div class="panel scroll">{% if reviews %}<table><thead><tr><th>Product / customer</th><th>Review</th><th>Visibility</th><th>Action</th></tr></thead><tbody>
+{% for review in reviews %}<tr><td>{{ review.product.name if review.product else 'Unavailable product' }}<br><small>{{ review.user.name if review.user else 'Unavailable customer' }}</small><br><small>{{ review.created_at.strftime('%d %b %Y') if review.created_at else '' }}</small></td><td><strong>{{ review.rating }}/5</strong><div class="comment">{{ review.comment or 'No written comment' }}</div></td><td>{{ 'Approved' if review.approved else 'Hidden' }}</td><td>{% if admin_can('admin_review_visibility') %}<form method="post" action="{{ url_for('admin_review_visibility', review_id=review.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="search" value="{{ search }}"><input type="hidden" name="status" value="{{ status }}"><button name="action" value="{{ 'hide' if review.approved else 'approve' }}">{{ 'Hide' if review.approved else 'Approve' }}</button></form>{% endif %}</td></tr>{% endfor %}
+</tbody></table>{% else %}<h2>No reviews found</h2><p>Customer reviews will appear here when they are available.</p>{% endif %}</div>
+{% endblock %}

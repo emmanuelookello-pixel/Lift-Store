@@ -1,0 +1,88 @@
+{% extends 'admin_management_base.html' %}
+{% block page_title %}Inventory | Lift Store{% endblock %}
+{% block management %}
+<div class="admin-page inventory-page">
+  <div class="page-toolbar">
+    <div>
+      <a href="{{ url_for('admin_dashboard') }}" class="back-link"> Dashboard</a>
+      <h1>Inventory</h1>
+      <p>Review stock levels and update available quantities.</p>
+    </div>
+    <a href="{{ url_for('admin_products') }}" class="primary-btn">Manage Products</a>
+  </div>
+  <div class="inventory-summary">
+    <div><span>Products</span><strong>{{ total_products }}</strong></div>
+    <div><span>Low stock · 1–5 units</span><strong>{{ low_stock_count }}</strong></div>
+    <div><span>Out of stock</span><strong>{{ out_of_stock_count }}</strong></div>
+    <div><span>Total units</span><strong>{{ total_stock_units }}</strong></div>
+    <div><span>Stock value</span><strong>{{ inventory_value | ugx }}</strong></div>
+  </div>
+  <p>Summary totals cover all products, including inactive products.</p>
+  <div class="admin-box">
+    <form method="get" action="{{ url_for('admin_inventory') }}" class="admin-search inventory-search">
+      <label>Search products
+        <input type="search" name="search" value="{{ search }}" placeholder="Product, brand or category">
+      </label>
+      <label>Stock level
+        <select name="stock_filter">
+          {% for value, label in [('', 'All stock levels'), ('in', 'In stock · 6+ units'), ('low', 'Low stock · 1–5 units'), ('out', 'Out of stock')] %}
+          <option value="{{ value }}" {% if stock_filter == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <button type="submit">Apply filters</button>
+      <a href="{{ url_for('admin_inventory') }}">Clear</a>
+    </form>
+    {% if products %}
+    <p>{{ products | length }} product(s) shown</p>
+    <div class="table-scroll">
+      <table class="management-table">
+        <thead><tr><th>Product</th><th>Brand / category</th><th>Price</th><th>Stock level</th><th>Update quantity</th></tr></thead>
+        <tbody>
+        {% for product in products %}
+        {% set quantity = product.stock or 0 %}
+        <tr>
+          <td><a href="{{ url_for('admin_edit_product', product_id=product.id) }}">{{ product.name }}</a>{% if not product.active %}<br><small>Inactive</small>{% endif %}</td>
+          <td>{{ product.brand }}<br><small>{{ product.category }}</small></td>
+          <td>{{ product.price | ugx }}</td>
+          <td>{{ quantity }} · {% if quantity <= 0 %}Out of stock{% elif quantity <= 5 %}Low stock{% else %}In stock{% endif %}</td>
+          <td>
+            <form method="post" action="{{ url_for('admin_update_stock', product_id=product.id) }}" class="inventory-update">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="original_stock" value="{{ product.stock if product.stock is not none else 'none' }}">
+              <input type="hidden" name="search" value="{{ search }}">
+              <input type="hidden" name="stock_filter" value="{{ stock_filter }}">
+              <label for="stock-{{ product.id }}" class="inventory-sr-only">Stock quantity for {{ product.name }}</label>
+              <input id="stock-{{ product.id }}" type="number" name="stock" min="0" max="2147483647" step="1" value="{{ quantity }}" required>
+              <button type="submit" class="primary-btn">Save</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p>No products match these filters.</p>
+    <a href="{{ url_for('admin_inventory') }}">View all inventory</a>
+    {% endif %}
+  </div>
+</div>
+<style>
+.inventory-page{max-width:1280px;margin:0 auto;padding:28px 20px;color:#182b43;background:#f5f7fb}
+.inventory-page h1,.inventory-page p,.inventory-page label,.inventory-page th,.inventory-page td,.inventory-page small,.inventory-page span{color:#182b43}
+.inventory-page a{color:#145da0}.inventory-page .primary-btn,.inventory-page button{background:#145da0;color:#fff;border:0;border-radius:8px;padding:11px 16px;cursor:pointer}
+.inventory-page .page-toolbar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px}
+.inventory-page .admin-box{background:#fff;border:1px solid #dbe5ef;border-radius:12px;padding:20px}
+.inventory-page .table-scroll{overflow-x:auto}.inventory-page table{width:100%;border-collapse:collapse;min-width:700px}
+.inventory-page th,.inventory-page td{text-align:left;padding:16px 12px;border-bottom:1px solid #dbe5ef}.inventory-page th{background:#edf3fa}
+.inventory-page input,.inventory-page select{font:inherit;color:#182b43}.inventory-page input[type=search]{padding:10px;border:1px solid #bbc8d6;border-radius:6px;max-width:100%}
+.inventory-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin:24px 0}
+.inventory-summary>div{background:#fff;border:1px solid #dbe5ef;border-radius:12px;padding:20px}
+.inventory-summary span,.inventory-summary strong{display:block}.inventory-summary strong{font-size:1.4rem;margin-top:8px;color:#174c8f}
+.inventory-search{display:flex;flex-wrap:wrap;align-items:end;gap:12px}.inventory-search label{display:grid;gap:6px}
+.inventory-search select,.inventory-update input{padding:10px;border:1px solid #bbc8d6;border-radius:6px;background:white}
+.inventory-update{display:flex;gap:8px;align-items:center}.inventory-update input[type=number]{width:110px}
+.inventory-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+</style>
+{% endblock %}

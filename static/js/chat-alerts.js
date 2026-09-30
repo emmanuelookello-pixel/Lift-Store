@@ -1,0 +1,13 @@
+(()=>{
+ const box=document.getElementById('chat-alerts');if(!box)return;
+ const button=box.querySelector('button'),badge=box.querySelector('.chat-unread'),notice=box.querySelector('.chat-notice');const baseTitle=document.title;let highest=null,loading=false,enabled=false,audio=null,hasFocus=true;
+ async function refresh(){if(loading)return;loading=true;try{const response=await fetch(box.dataset.url,{cache:'no-store'});if(!response.ok)return;const data=await response.json();badge.textContent=data.count?String(data.count)+' unread chat message'+(data.count===1?'':'s'):'';badge.href=data.url;badge.hidden=!data.count;document.title=data.count?'('+data.count+') '+baseTitle:baseTitle;
+ if(highest!==null&&data.latest>highest){notice.textContent='New chat message received.';notice.href=data.url;notice.hidden=false;
+ if(enabled){if(audio&&audio.state==='running'){const sound=audio.createOscillator(),gain=audio.createGain();sound.connect(gain);gain.connect(audio.destination);gain.gain.setValueAtTime(.06,audio.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.2);sound.frequency.value=740;sound.start();sound.stop(audio.currentTime+.2);}
+ if('Notification' in window&&Notification.permission==='granted'&&(!document.hasFocus()||document.hidden)){try{const notification=new Notification('New Lift Store chat message',{body:'Open your chat to read and reply.',tag:'listo-chat'});notification.onclick=()=>{window.focus();window.location.href=data.url;notification.close();};}catch(e){}}}}
+ highest=Math.max(highest||0,data.latest);if(!data.count)notice.hidden=true;
+ }catch(e){}finally{loading=false;}}
+ button.addEventListener('click',async()=>{enabled=!enabled;button.textContent=enabled?'Mute chat alerts':'Enable chat alerts';button.setAttribute('aria-pressed',String(enabled));if(enabled){try{const Audio=window.AudioContext||window.webkitAudioContext;if(Audio){audio=audio||new Audio();await audio.resume();}if('Notification' in window&&Notification.permission==='default')await Notification.requestPermission();}catch(e){}notice.textContent='Chat sound is enabled for this tab. Browser alerts depend on notification permission.';notice.hidden=false;}});
+ window.listoChatAlerts={markRead:async(thread,last)=>{if(!document.hasFocus()||document.hidden)return;try{const response=await fetch(box.dataset.url,{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':box.dataset.csrf},body:JSON.stringify({thread_id:thread,last_id:last})});if(response.ok)await refresh();}catch(e){}}};
+ refresh();setInterval(refresh,5000);window.addEventListener('focus',refresh);
+})();
