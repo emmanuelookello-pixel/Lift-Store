@@ -1,0 +1,7 @@
+Flask
+Flask-SQLAlchemy
+Werkzeug
+Flask-Migrate
+Flask-WTF
+
+cryptography
