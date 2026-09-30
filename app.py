@@ -1610,6 +1610,21 @@ def seed_v2_data():
 # ==================================================
 # FLASK CLI - INITIALIZE LIFT STORE V2
 # ==================================================
+@app.cli.command("bootstrap-demo-db")
+def bootstrap_demo_db():
+    """Create a fresh demo database and initialize Lift Store V2 data."""
+    print("Creating Lift Store demo database...")
+
+    db.create_all()
+
+    try:
+        seed_v2_data()
+        print("Lift Store demo database initialized successfully.")
+    except Exception as error:
+        db.session.rollback()
+        print("Demo database initialization failed.")
+        print("Error:", error)
+        raise
 
 @app.cli.command("seed-v2")
 def seed_v2_command():
